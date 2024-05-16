@@ -12,8 +12,14 @@
 		8C11F10F2BE7BA870048DFD0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F10E2BE7BA870048DFD0 /* ViewController.swift */; };
 		8C11F1142BE7BA890048DFD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C11F1132BE7BA890048DFD0 /* Assets.xcassets */; };
 		8C11F1172BE7BA890048DFD0 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 8C11F1162BE7BA890048DFD0 /* Base */; };
-		8C11F1272BE7C47B0048DFD0 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F1262BE7C47B0048DFD0 /* Model.swift */; };
 		8C11F1292BE7C48D0048DFD0 /* Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F1282BE7C48D0048DFD0 /* Presenter.swift */; };
+		8C11F12C2BE7C71F0048DFD0 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8C11F12B2BE7C71F0048DFD0 /* SnapKit */; };
+		8C11F12E2BE7C71F0048DFD0 /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 8C11F12D2BE7C71F0048DFD0 /* SnapKit-Dynamic */; };
+		8C11F1302BE835480048DFD0 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F12F2BE835480048DFD0 /* TableViewCell.swift */; };
+		8C11F1332BE95BA50048DFD0 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F1312BE95BA40048DFD0 /* Model.xcdatamodeld */; };
+		8C11F1362BE95FBF0048DFD0 /* CoreData Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F1352BE95FBF0048DFD0 /* CoreData Stack.swift */; };
+		8C11F1392BE97E650048DFD0 /* UserList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F1372BE97E650048DFD0 /* UserList+CoreDataClass.swift */; };
+		8C11F13A2BE97E650048DFD0 /* UserList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F1382BE97E650048DFD0 /* UserList+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,8 +30,12 @@
 		8C11F1132BE7BA890048DFD0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8C11F1162BE7BA890048DFD0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8C11F1182BE7BA890048DFD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8C11F1262BE7C47B0048DFD0 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		8C11F1282BE7C48D0048DFD0 /* Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presenter.swift; sourceTree = "<group>"; };
+		8C11F12F2BE835480048DFD0 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
+		8C11F1322BE95BA50048DFD0 /* Model001.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model001.xcdatamodel; sourceTree = "<group>"; };
+		8C11F1352BE95FBF0048DFD0 /* CoreData Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreData Stack.swift"; sourceTree = "<group>"; };
+		8C11F1372BE97E650048DFD0 /* UserList+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserList+CoreDataClass.swift"; sourceTree = "<group>"; };
+		8C11F1382BE97E650048DFD0 /* UserList+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserList+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +43,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C11F12C2BE7C71F0048DFD0 /* SnapKit in Frameworks */,
+				8C11F12E2BE7C71F0048DFD0 /* SnapKit-Dynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +91,7 @@
 			children = (
 				8C11F10A2BE7BA870048DFD0 /* AppDelegate.swift */,
 				8C11F10C2BE7BA870048DFD0 /* SceneDelegate.swift */,
+				8C11F1342BE95FA00048DFD0 /* CoreData Stack */,
 				8C11F1202BE7C0A70048DFD0 /* MVP Module */,
 			);
 			path = Sources;
@@ -97,7 +110,7 @@
 		8C11F1212BE7C0B50048DFD0 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				8C11F1262BE7C47B0048DFD0 /* Model.swift */,
+				8C11F1312BE95BA40048DFD0 /* Model.xcdatamodeld */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -106,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				8C11F10E2BE7BA870048DFD0 /* ViewController.swift */,
+				8C11F12F2BE835480048DFD0 /* TableViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -116,6 +130,24 @@
 				8C11F1282BE7C48D0048DFD0 /* Presenter.swift */,
 			);
 			path = Presenter;
+			sourceTree = "<group>";
+		};
+		8C11F1342BE95FA00048DFD0 /* CoreData Stack */ = {
+			isa = PBXGroup;
+			children = (
+				8C11F13B2BE97EBE0048DFD0 /* UserList */,
+				8C11F1352BE95FBF0048DFD0 /* CoreData Stack.swift */,
+			);
+			path = "CoreData Stack";
+			sourceTree = "<group>";
+		};
+		8C11F13B2BE97EBE0048DFD0 /* UserList */ = {
+			isa = PBXGroup;
+			children = (
+				8C11F1372BE97E650048DFD0 /* UserList+CoreDataClass.swift */,
+				8C11F1382BE97E650048DFD0 /* UserList+CoreDataProperties.swift */,
+			);
+			path = UserList;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -134,6 +166,10 @@
 			dependencies = (
 			);
 			name = "Project 008. User Database";
+			packageProductDependencies = (
+				8C11F12B2BE7C71F0048DFD0 /* SnapKit */,
+				8C11F12D2BE7C71F0048DFD0 /* SnapKit-Dynamic */,
+			);
 			productName = "Project 008. User Database";
 			productReference = 8C11F1072BE7BA870048DFD0 /* Project 008. User Database.app */;
 			productType = "com.apple.product-type.application";
@@ -162,6 +198,9 @@
 				Base,
 			);
 			mainGroup = 8C11F0FE2BE7BA870048DFD0;
+			packageReferences = (
+				8C11F12A2BE7C71F0048DFD0 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			productRefGroup = 8C11F1082BE7BA870048DFD0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -188,10 +227,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C11F1362BE95FBF0048DFD0 /* CoreData Stack.swift in Sources */,
+				8C11F1332BE95BA50048DFD0 /* Model.xcdatamodeld in Sources */,
 				8C11F10F2BE7BA870048DFD0 /* ViewController.swift in Sources */,
 				8C11F10B2BE7BA870048DFD0 /* AppDelegate.swift in Sources */,
 				8C11F10D2BE7BA870048DFD0 /* SceneDelegate.swift in Sources */,
-				8C11F1272BE7C47B0048DFD0 /* Model.swift in Sources */,
+				8C11F1302BE835480048DFD0 /* TableViewCell.swift in Sources */,
+				8C11F1392BE97E650048DFD0 /* UserList+CoreDataClass.swift in Sources */,
+				8C11F13A2BE97E650048DFD0 /* UserList+CoreDataProperties.swift in Sources */,
 				8C11F1292BE7C48D0048DFD0 /* Presenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -403,6 +446,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8C11F12A2BE7C71F0048DFD0 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8C11F12B2BE7C71F0048DFD0 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C11F12A2BE7C71F0048DFD0 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		8C11F12D2BE7C71F0048DFD0 /* SnapKit-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8C11F12A2BE7C71F0048DFD0 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = "SnapKit-Dynamic";
+		};
+/* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		8C11F1312BE95BA40048DFD0 /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				8C11F1322BE95BA50048DFD0 /* Model001.xcdatamodel */,
+			);
+			currentVersion = 8C11F1322BE95BA50048DFD0 /* Model001.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 8C11F0FF2BE7BA870048DFD0 /* Project object */;
 }
