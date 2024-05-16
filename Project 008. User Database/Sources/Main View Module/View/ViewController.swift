@@ -13,7 +13,7 @@ final class ViewController: UIViewController {
     
     // MARK: UI Elements & Oulets
     
-    var presenter: UserPresenterProtocol?
+//    var presenter: UserPresenterProtocol?
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
@@ -143,7 +143,10 @@ final class ViewController: UIViewController {
             }
         }
         catch {
-            fatalError("Fatal error!")
+//            fatalError("Fatal error!")
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
         }
     }
     
@@ -157,7 +160,10 @@ final class ViewController: UIViewController {
             getAllUsers()
         }
         catch {
-            fatalError("Fatal error!")
+//            fatalError("Fatal error!")
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
         }
     }
     
@@ -169,7 +175,10 @@ final class ViewController: UIViewController {
             getAllUsers()
         }
         catch {
-            fatalError("Fatal error!")
+//            fatalError("Fatal error!")
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
         }
     }
     

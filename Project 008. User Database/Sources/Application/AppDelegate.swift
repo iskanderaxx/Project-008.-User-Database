@@ -40,7 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             do {
                 try context.save()
             } catch {
-//                context.rollback()
+                context.rollback()
                 let nserror = error as NSError
                 fatalError("Unresolved error \(error), \(nserror.userInfo)")
             }
