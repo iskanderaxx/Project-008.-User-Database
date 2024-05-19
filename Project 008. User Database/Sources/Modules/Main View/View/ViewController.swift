@@ -9,15 +9,13 @@ final class ViewController: UIViewController {
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
-    private var models = [UserList]()
+    private var models = [MemberList]()
     
     // MARK: UI Elements & Oulets
     
-//    var presenter: UserPresenterProtocol?
-    
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Print your name here"
+        textField.placeholder = "Print member name here"
         textField.textColor = .gray
         textField.font = UIFont.systemFont(ofSize: 15)
         textField.backgroundColor = .systemGray6
@@ -28,20 +26,19 @@ final class ViewController: UIViewController {
                                                   width: 10,
                                                   height: textField.frame.height))
         textField.leftViewMode = .always
-        
         return textField
     }()
     
-    private lazy var blueButton: UIButton = {
+    private lazy var orangeButton: UIButton = {
         let button = UIButton(type: .system)
         button.clipsToBounds = true
-        button.backgroundColor = .systemBlue
+        button.backgroundColor = .systemOrange
         button.tintColor = .white
-        button.setTitle("Add user", for: .normal)
+        button.setTitle("Add member", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 10
-        button.addTarget(self, action: #selector(blueButtonPressed), for: .touchUpInside)
+        button.addTarget(self, action: #selector(orangeButtonPressed), for: .touchUpInside)
         return button
     }()
     
@@ -54,7 +51,7 @@ final class ViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(UITableViewCell.self, 
-                           forCellReuseIdentifier: "default")
+                           forCellReuseIdentifier: "defaultCell")
         tableView.dataSource = self
         tableView.delegate = self
         tableView.layer.cornerRadius = 20
@@ -67,23 +64,21 @@ final class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        title = "Users"
+        title = "Eurovision 2024"
         navigationController?.navigationBar.prefersLargeTitles = true
         showCurrentData()
         setupViewsHierarchy()
         setupLayout()
-        
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAdd))
     }
     
     // MARK: Setup & Layout
     
     private func showCurrentData() {
-        getAllUsers()
+        getAllMembers()
     }
     
     private func setupViewsHierarchy() {
-        [textField, blueButton, grayView, tableView].forEach { view.addSubview($0) }
+        [textField, orangeButton, grayView, tableView].forEach { view.addSubview($0) }
     }
     
     private func setupLayout() {
@@ -94,7 +89,7 @@ final class ViewController: UIViewController {
             make.height.equalTo(45)
         }
         
-        blueButton.snp.makeConstraints { make in
+        orangeButton.snp.makeConstraints { make in
             make.top.equalTo(textField.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(15)
             make.trailing.equalTo(view).offset(-15)
@@ -102,7 +97,7 @@ final class ViewController: UIViewController {
         }
         
         grayView.snp.makeConstraints { make in
-            make.top.equalTo(blueButton.snp.bottom).offset(20)
+            make.top.equalTo(orangeButton.snp.bottom).offset(20)
             make.leading.trailing.bottom.equalTo(view)
         }
         
@@ -117,82 +112,80 @@ final class ViewController: UIViewController {
     
     // MARK: Actions
     
+//    @objc
+//    private func orangeButtonPressed() {
+//        let alert = UIAlertController(title: "New member", message: "Enter new member name", preferredStyle: .alert)
+//        alert.addTextField(configurationHandler: nil)
+//        alert.addAction(UIAlertAction(title: "Submit", style: .cancel, handler: { [weak self] _ in
+//            guard let field = alert.textFields?.first, let text = field.text, !text.isEmpty else { return }
+//            
+//            self?.createMember(name: text)
+//        }))
+//        
+//        present(alert, animated: true)
+//    }
+    
     @objc
-    private func blueButtonPressed() {
-        let alert = UIAlertController(title: "New User", message: "Enter new User name", preferredStyle: .alert)
-        alert.addTextField(configurationHandler: nil)
-        alert.addAction(UIAlertAction(title: "Submit", style: .cancel, handler: { [weak self] _ in
-            guard let field = alert.textFields?.first, let text = field.text, !text.isEmpty else { return }
-            
-            self?.createUser(name: text)
-        }))
+    private func orangeButtonPressed() {
+        guard let text = textField.text, !text.isEmpty else { return }
         
-        present(alert, animated: true)
+        createMember(name: text)
+        textField.text = ""
     }
-    
-    
     
     // MARK: Core Data
     
-    func getAllUsers() {
+    private func getAllMembers() {
         do {
-            models = try context.fetch(UserList.fetchRequest())
+            models = try context.fetch(MemberList.fetchRequest())
             
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
-        }
-        catch {
-//            fatalError("Fatal error!")
+        } catch {
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         }
     }
     
-    func createUser(name: String) {
-        let newUser = UserList(context: context)
-        newUser.name = name
-        newUser.dateOfBirth = Date()
+    private func createMember(name: String) {
+        let newMember = MemberList(context: context)
+        newMember.name = name
         
         do {
             try context.save()
-            getAllUsers()
-        }
-        catch {
-//            fatalError("Fatal error!")
+            getAllMembers()
+        } catch {
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         }
     }
     
-    func deleteUser(user: UserList) {
-        context.delete(user)
+    private func deleteCurrent(member: MemberList) {
+        context.delete(member)
         
         do {
             try context.save()
-            getAllUsers()
-        }
-        catch {
-//            fatalError("Fatal error!")
+            getAllMembers()
+        } catch {
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         }
     }
     
-    func updateUser(user: UserList, newName: String) {
-        user.name = newName
-//        let refinedUser = UserList(context: context)
-//        refinedUser.name = name
+    private func updateCurrent(member: MemberList, newName: String) {
+        member.name = newName
         
         do {
             try context.save()
-            getAllUsers()
-        }
-        catch {
-            fatalError("Fatal error!")
+            getAllMembers()
+        } catch {
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
         }
     }
 }
@@ -206,9 +199,9 @@ extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let model = models[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "default", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell", for: indexPath)
         cell.textLabel?.text = model.name
-        // presenter?.configure(cell: cell, forRow: indexPath.row)
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
 }
@@ -217,29 +210,20 @@ extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let user = models[indexPath.row]
-        let actionSheet = UIAlertController(title: "Edit", message: nil, preferredStyle: .actionSheet)
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        
-        actionSheet.addAction(UIAlertAction(title: "Edit user", style: .default, handler: { [weak self] _ in
-            
-            let alert = UIAlertController(title: "Edit info", message: "Edit current user info", preferredStyle: .alert)
-            alert.addTextField(configurationHandler: nil)
-            alert.textFields?.first?.text = user.name
-            alert.addAction(UIAlertAction(title: "Confirm", style: .cancel, handler: { [weak self] _ in
-                guard let field = alert.textFields?.first, let newName = field.text, !newName.isEmpty else { return }
-                
-                self?.updateUser(user: user, newName: newName)
-            }))
-            
-            self?.present(alert, animated: true)
-        }))
-        
-        actionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
-            self?.deleteUser(user: user)
-        }))
-        
-        present(actionSheet, animated: true)
-        // presenter?.didSelectRow(at: indexPath)
+        let member = models[indexPath.row]
+        let detailViewController = MemberDetailViewController(member: member)
+        navigationController?.pushViewController(detailViewController, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let member = models[indexPath.row]
+            deleteCurrent(member: member)
+            tableView.reloadData()
+        }
     }
 }
