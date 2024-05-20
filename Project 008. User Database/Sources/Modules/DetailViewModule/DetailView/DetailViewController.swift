@@ -1,7 +1,7 @@
 
 import UIKit
 
-final class MemberDetailViewController: UIViewController {
+final class DetailViewController: UIViewController {
     private let member: MemberList
     
     init(member: MemberList) {
@@ -15,7 +15,6 @@ final class MemberDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        title = member.name
+//        view.backgroundColor = .white
     }
 }

@@ -1,14 +1,12 @@
 
 import UIKit
 import SnapKit
-import CoreData
 
-// MARK: - View
+final class MainViewController: UIViewController, MemberViewProtocol {
 
-final class ViewController: UIViewController {
+    // MARK: Data
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
+    private var presenter: MainPresenter?
     private var models = [MemberList]()
     
     // MARK: UI Elements & Oulets
@@ -21,7 +19,7 @@ final class ViewController: UIViewController {
         textField.backgroundColor = .systemGray6
         textField.textAlignment = .natural
         textField.layer.cornerRadius = 10
-        textField.leftView = UIView(frame: CGRect(x: 0, 
+        textField.leftView = UIView(frame: CGRect(x: 0,
                                                   y: 0,
                                                   width: 10,
                                                   height: textField.frame.height))
@@ -29,10 +27,10 @@ final class ViewController: UIViewController {
         return textField
     }()
     
-    private lazy var orangeButton: UIButton = {
+    private lazy var blueButton: UIButton = {
         let button = UIButton(type: .system)
         button.clipsToBounds = true
-        button.backgroundColor = .systemOrange
+        button.backgroundColor = .systemBlue
         button.tintColor = .white
         button.setTitle("Add member", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
@@ -48,9 +46,9 @@ final class ViewController: UIViewController {
         return grayView
     }()
 
-    private lazy var tableView: UITableView = {
+    lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
-        tableView.register(UITableViewCell.self, 
+        tableView.register(UITableViewCell.self,
                            forCellReuseIdentifier: "defaultCell")
         tableView.dataSource = self
         tableView.delegate = self
@@ -63,22 +61,28 @@ final class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         title = "Eurovision 2024"
-        navigationController?.navigationBar.prefersLargeTitles = true
-        showCurrentData()
+        
+        setupTitleColor()
+        setupPresenter()
         setupViewsHierarchy()
         setupLayout()
     }
     
     // MARK: Setup & Layout
     
-    private func showCurrentData() {
-        getAllMembers()
+    private func setupTitleColor() {
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.systemBlue]
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    private func setupPresenter() {
+        presenter = MainPresenter(view: self)
+        presenter?.getAllMembers()
     }
     
     private func setupViewsHierarchy() {
-        [textField, orangeButton, grayView, tableView].forEach { view.addSubview($0) }
+        [textField, blueButton, grayView, tableView].forEach { view.addSubview($0) }
     }
     
     private func setupLayout() {
@@ -89,7 +93,7 @@ final class ViewController: UIViewController {
             make.height.equalTo(45)
         }
         
-        orangeButton.snp.makeConstraints { make in
+        blueButton.snp.makeConstraints { make in
             make.top.equalTo(textField.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(15)
             make.trailing.equalTo(view).offset(-15)
@@ -97,7 +101,7 @@ final class ViewController: UIViewController {
         }
         
         grayView.snp.makeConstraints { make in
-            make.top.equalTo(orangeButton.snp.bottom).offset(20)
+            make.top.equalTo(blueButton.snp.bottom).offset(20)
             make.leading.trailing.bottom.equalTo(view)
         }
         
@@ -110,89 +114,31 @@ final class ViewController: UIViewController {
         
     }
     
-    // MARK: Actions
-    
-//    @objc
-//    private func orangeButtonPressed() {
-//        let alert = UIAlertController(title: "New member", message: "Enter new member name", preferredStyle: .alert)
-//        alert.addTextField(configurationHandler: nil)
-//        alert.addAction(UIAlertAction(title: "Submit", style: .cancel, handler: { [weak self] _ in
-//            guard let field = alert.textFields?.first, let text = field.text, !text.isEmpty else { return }
-//            
-//            self?.createMember(name: text)
-//        }))
-//        
-//        present(alert, animated: true)
-//    }
-    
     @objc
     private func orangeButtonPressed() {
         guard let text = textField.text, !text.isEmpty else { return }
         
-        createMember(name: text)
+        presenter?.createMember(name: text)
         textField.text = ""
-    }
-    
-    // MARK: Core Data
-    
-    private func getAllMembers() {
-        do {
-            models = try context.fetch(MemberList.fetchRequest())
-            
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        } catch {
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        }
-    }
-    
-    private func createMember(name: String) {
-        let newMember = MemberList(context: context)
-        newMember.name = name
-        
-        do {
-            try context.save()
-            getAllMembers()
-        } catch {
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        }
-    }
-    
-    private func deleteCurrent(member: MemberList) {
-        context.delete(member)
-        
-        do {
-            try context.save()
-            getAllMembers()
-        } catch {
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        }
-    }
-    
-    private func updateCurrent(member: MemberList, newName: String) {
-        member.name = newName
-        
-        do {
-            try context.save()
-            getAllMembers()
-        } catch {
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        }
     }
 }
 
 // MARK: - Extensions
 
-extension ViewController: UITableViewDataSource {
+extension MainViewController {
+    func showInfo(_ members: [MemberList]) {
+        self.models = members
+        self.tableView.reloadData()
+    }
+    
+    func showError(_ error: any Error) {
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+}
+
+extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return models.count
     }
@@ -206,12 +152,12 @@ extension ViewController: UITableViewDataSource {
     }
 }
 
-extension ViewController: UITableViewDelegate {
+extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
         let member = models[indexPath.row]
-        let detailViewController = MemberDetailViewController(member: member)
+        let detailViewController = DetailViewController(member: member)
         navigationController?.pushViewController(detailViewController, animated: true)
     }
     
@@ -222,7 +168,7 @@ extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let member = models[indexPath.row]
-            deleteCurrent(member: member)
+            presenter?.deleteMember(member)
             tableView.reloadData()
         }
     }

@@ -4,15 +4,15 @@ import SnapKit
 
 final class TableViewCell: UITableViewCell {
     
-//    // MARK: UI Elements & Oulets
-//    
-//    private lazy var userImage: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.contentMode = .scaleAspectFill
-//        imageView.clipsToBounds = true
-//        imageView.layer.cornerRadius = 40
-//        return imageView
-//    }()
+    // MARK: UI Elements & Oulets
+    
+    private lazy var userImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 40
+        return imageView
+    }()
 //    
 //    private lazy var userName: UILabel = {
 //        let label = UILabel()
@@ -31,33 +31,6 @@ final class TableViewCell: UITableViewCell {
 //        label.textAlignment = .left
 //        return label
 //    }()
-//    
-//    // MARK: Data
-//    
-//    var card: Card? {
-//        didSet {
-//            cardName.text = card?.name
-//            cardRarity.text = card?.rarity
-//            
-//            guard let imagePath = card?.imageURL,
-//                  let imageURL = URL(string: imagePath) else {
-//                cardImage.image = UIImage(named: "placeholder")
-//                return
-//            }
-//            
-//            URLSession.shared.dataTask(with: imageURL) { (data, response, error) in
-//                guard let data = data, error == nil else {
-//                    DispatchQueue.main.async {
-//                        self.cardImage.image = UIImage(named: "placeholder")
-//                    }
-//                    return
-//                }
-//                DispatchQueue.main.async {
-//                    self.cardImage.image = UIImage(data: data)
-//                }
-//            }.resume()
-//        }
-//    }
 //    
 //    // MARK: Initializers
 //    
