@@ -110,20 +110,18 @@
 		8C11F1202BE7C0A70048DFD0 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				8C11F1212BE7C0B50048DFD0 /* Model */,
 				8CD125032BFA863D00609DA2 /* MainViewModule */,
 				8CFE096E2BF654EA00494D34 /* DetailViewModule */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
 		};
-		8C11F1212BE7C0B50048DFD0 /* Model */ = {
+		8C11F1212BE7C0B50048DFD0 /* MainModel */ = {
 			isa = PBXGroup;
 			children = (
 				8C11F1342BE95FA00048DFD0 /* CoreData */,
-				8C11F1312BE95BA40048DFD0 /* Model.xcdatamodeld */,
 			);
-			path = Model;
+			path = MainModel;
 			sourceTree = "<group>";
 		};
 		8C11F1222BE7C0BD0048DFD0 /* MainView */ = {
@@ -146,6 +144,7 @@
 			isa = PBXGroup;
 			children = (
 				8C11F1382BE97E650048DFD0 /* MemberList+CoreDataProperties.swift */,
+				8C11F1312BE95BA40048DFD0 /* Model.xcdatamodeld */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -153,6 +152,7 @@
 		8CD125032BFA863D00609DA2 /* MainViewModule */ = {
 			isa = PBXGroup;
 			children = (
+				8C11F1212BE7C0B50048DFD0 /* MainModel */,
 				8C11F1222BE7C0BD0048DFD0 /* MainView */,
 				8C11F1232BE7C0CF0048DFD0 /* MainPresenter */,
 			);

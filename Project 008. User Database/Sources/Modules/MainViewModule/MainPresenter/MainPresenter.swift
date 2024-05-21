@@ -1,24 +1,30 @@
 
 import CoreData
-import UIKit
 
-protocol MemberViewProtocol: AnyObject {
+// MARK: - Main Presenter
+
+protocol MainViewProtocol: AnyObject {
     func showInfo(_ members: [MemberList])
     func showError(_ error: Error)
 }
 
-// MARK: - Presenter
-
 final class MainPresenter {
-    weak var view: MemberViewProtocol?
+    weak var view: MainViewProtocol?
+    var controller: MainViewController
     
     private var context: NSManagedObjectContext {
-        return (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        guard let appDelegate = controller.delegate as? AppDelegate else {
+            fatalError("AppDelegate is nil or is not of type AppDelegate")
+        }
+        return appDelegate.persistentContainer.viewContext
     }
     
-    init(view: MemberViewProtocol) {
+    init(view: MainViewProtocol, controller: MainViewController) {
         self.view = view
+        self.controller = controller
     }
+    
+    // MARK: CRUD stack
      
     func getAllMembers() {
         do {

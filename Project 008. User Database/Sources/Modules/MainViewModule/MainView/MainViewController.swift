@@ -2,12 +2,16 @@
 import UIKit
 import SnapKit
 
-final class MainViewController: UIViewController, MemberViewProtocol {
+// MARK: - Main Controller
 
-    // MARK: Data
+final class MainViewController: UIViewController, MainViewProtocol {
+   
+    // MARK: State
+    
+    var delegate = UIApplication.shared.delegate
     
     private var presenter: MainPresenter?
-    private var models = [MemberList]()
+    private var members = [MemberList]()
     
     // MARK: UI Elements & Oulets
     
@@ -53,6 +57,8 @@ final class MainViewController: UIViewController, MemberViewProtocol {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.layer.cornerRadius = 20
+//        tableView.rowHeight = UITableView.automaticDimension
+//        tableView.estimatedRowHeight = 44
         tableView.layer.masksToBounds = true
         return tableView
     }()
@@ -62,9 +68,8 @@ final class MainViewController: UIViewController, MemberViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Eurovision 2024"
-        
         setupTitleColor()
-        setupPresenter()
+        setupMainPresenter()
         setupViewsHierarchy()
         setupLayout()
     }
@@ -76,8 +81,8 @@ final class MainViewController: UIViewController, MemberViewProtocol {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
-    private func setupPresenter() {
-        presenter = MainPresenter(view: self)
+    private func setupMainPresenter() {
+        presenter = MainPresenter(view: self, controller: self)
         presenter?.getAllMembers()
     }
     
@@ -106,12 +111,13 @@ final class MainViewController: UIViewController, MemberViewProtocol {
         }
         
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(grayView.snp.top).offset(20)
+            make.top.equalTo(grayView.snp.top).offset(15)
             make.leading.equalTo(grayView.snp.leading).offset(15)
             make.trailing.equalTo(grayView.snp.trailing).offset(-15)
+//            make.height.equalTo(tableView.rowHeight * CGFloat(members.count))
+            
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-        
     }
     
     @objc
@@ -127,7 +133,7 @@ final class MainViewController: UIViewController, MemberViewProtocol {
 
 extension MainViewController {
     func showInfo(_ members: [MemberList]) {
-        self.models = members
+        self.members = members
         self.tableView.reloadData()
     }
     
@@ -140,11 +146,11 @@ extension MainViewController {
 
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return models.count
+        members.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let model = models[indexPath.row]
+        let model = members[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell", for: indexPath)
         cell.textLabel?.text = model.name
         cell.accessoryType = .disclosureIndicator
@@ -156,18 +162,18 @@ extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let member = models[indexPath.row]
+        let member = members[indexPath.row]
         let detailViewController = DetailViewController(member: member)
         navigationController?.pushViewController(detailViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
+        true
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let member = models[indexPath.row]
+            let member = members[indexPath.row]
             presenter?.deleteMember(member)
             tableView.reloadData()
         }
