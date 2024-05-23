@@ -18,7 +18,7 @@
 		8C11F13A2BE97E650048DFD0 /* MemberList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F1382BE97E650048DFD0 /* MemberList+CoreDataProperties.swift */; };
 		8CD125022BFA75EF00609DA2 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD125012BFA75EF00609DA2 /* DetailViewController.swift */; };
 		8CD125062BFBC77600609DA2 /* DetailPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD125052BFBC77600609DA2 /* DetailPresenter.swift */; };
-		8CD64C642BF9F054007F59E4 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8CD64C632BF9F054007F59E4 /* SnapKit */; };
+		8CD1250C2BFD42EE00609DA2 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8CD1250B2BFD42EE00609DA2 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -55,7 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8CD64C642BF9F054007F59E4 /* SnapKit in Frameworks */,
+				8CD1250C2BFD42EE00609DA2 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,12 +116,12 @@
 			path = Modules;
 			sourceTree = "<group>";
 		};
-		8C11F1212BE7C0B50048DFD0 /* MainModel */ = {
+		8C11F1212BE7C0B50048DFD0 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				8C11F1342BE95FA00048DFD0 /* CoreData */,
 			);
-			path = MainModel;
+			path = Model;
 			sourceTree = "<group>";
 		};
 		8C11F1222BE7C0BD0048DFD0 /* MainView */ = {
@@ -152,7 +152,7 @@
 		8CD125032BFA863D00609DA2 /* MainViewModule */ = {
 			isa = PBXGroup;
 			children = (
-				8C11F1212BE7C0B50048DFD0 /* MainModel */,
+				8C11F1212BE7C0B50048DFD0 /* Model */,
 				8C11F1222BE7C0BD0048DFD0 /* MainView */,
 				8C11F1232BE7C0CF0048DFD0 /* MainPresenter */,
 			);
@@ -219,7 +219,7 @@
 			);
 			name = "Project 008. User Database";
 			packageProductDependencies = (
-				8CD64C632BF9F054007F59E4 /* SnapKit */,
+				8CD1250B2BFD42EE00609DA2 /* SnapKit */,
 			);
 			productName = "Project 008. User Database";
 			productReference = 8C11F1072BE7BA870048DFD0 /* Project 008. User Database.app */;
@@ -250,7 +250,7 @@
 			);
 			mainGroup = 8C11F0FE2BE7BA870048DFD0;
 			packageReferences = (
-				8CD64C622BF9F054007F59E4 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				8CD1250A2BFD42EE00609DA2 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			productRefGroup = 8C11F1082BE7BA870048DFD0 /* Products */;
 			projectDirPath = "";
@@ -499,7 +499,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		8CD64C622BF9F054007F59E4 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+		8CD1250A2BFD42EE00609DA2 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
 			requirement = {
@@ -510,9 +510,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8CD64C632BF9F054007F59E4 /* SnapKit */ = {
+		8CD1250B2BFD42EE00609DA2 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8CD64C622BF9F054007F59E4 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			package = 8CD1250A2BFD42EE00609DA2 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -1,27 +1,19 @@
 
 import CoreData
 
-// MARK: - Main Presenter
-
 protocol MainViewProtocol: AnyObject {
-    func showInfo(_ members: [MemberList])
-    func showError(_ error: Error)
+    func showInformation(about members: [MemberList])
+    func showError(with error: Error)
 }
 
 final class MainPresenter {
+    
     weak var view: MainViewProtocol?
-    var controller: MainViewController
+    private var context: NSManagedObjectContext
     
-    private var context: NSManagedObjectContext {
-        guard let appDelegate = controller.delegate as? AppDelegate else {
-            fatalError("AppDelegate is nil or is not of type AppDelegate")
-        }
-        return appDelegate.persistentContainer.viewContext
-    }
-    
-    init(view: MainViewProtocol, controller: MainViewController) {
+    init(view: MainViewProtocol, context: NSManagedObjectContext) {
         self.view = view
-        self.controller = controller
+        self.context = context
     }
     
     // MARK: CRUD stack
@@ -29,10 +21,10 @@ final class MainPresenter {
     func getAllMembers() {
         do {
             let members = try context.fetch(MemberList.fetchRequest())
-            view?.showInfo(members)
+            view?.showInformation(about: members)
 
         } catch {
-            view?.showError(error)
+            view?.showError(with: error)
         }
     }
     
@@ -44,18 +36,18 @@ final class MainPresenter {
             try context.save()
             getAllMembers()
         } catch {
-            view?.showError(error)
+            view?.showError(with: error)
         }
     }
     
-    func deleteMember(_ member: MemberList) { //
+    func deleteMember(_ member: MemberList) {
         context.delete(member)
         
         do {
             try context.save()
             getAllMembers()
         } catch {
-            view?.showError(error)
+            view?.showError(with: error)
         }
     }
     
@@ -64,9 +56,8 @@ final class MainPresenter {
         
         do {
             try context.save()
-            getAllMembers()
         } catch {
-            view?.showError(error)
+            view?.showError(with: error)
         }
     }
 }

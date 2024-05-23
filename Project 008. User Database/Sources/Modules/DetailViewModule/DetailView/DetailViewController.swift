@@ -2,16 +2,17 @@
 import UIKit
 import SnapKit
 
-// MARK: - Detail Controller
-
 final class DetailViewController: UIViewController, DetailViewProtocol {
+
+    // MARK: Data
     
-    private var detailPresenter: DetailPresenter?
     private let member: MemberList
+    private var detailPresenter: DetailPresenter?
+    private var isEditingEnabled = false
     
-    // MARK: UI Elements & Oulets
+    // MARK: UI Elements & Outlets
     
-    private lazy var editButton: UIButton = {
+    var editButton: UIButton = {
         let button = UIButton(type: .system)
         button.clipsToBounds = true
         button.backgroundColor = .white
@@ -21,15 +22,15 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
         button.setTitleColor(.black, for: .normal)
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 3.0
-        button.layer.borderColor = 
+        button.layer.borderColor =
         UIColor.systemBlue.cgColor
-        button.addTarget(self, action: #selector(editMemberProfileButtonPressed), for: .touchUpInside)
+        button.addTarget(nil, action: #selector(DetailViewController.editButtonPressed), for: .touchUpInside)
         return button
     }()
     
     private lazy var memberImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "no-profile-min")
+        imageView.image = UIImage(named: "eurovision")
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 125
         imageView.clipsToBounds = true
@@ -50,6 +51,7 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
         tableView.delegate = self
         tableView.layer.cornerRadius = 15
         tableView.layer.masksToBounds = true
+        tableView.isScrollEnabled = false
         return tableView
     }()
     
@@ -76,16 +78,16 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
     // MARK: Setup & Layout
     
     private func setupDetailPresenter() {
-        detailPresenter = DetailPresenter(view: self, member: member)
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError("Error: fatal error")
+        }
+        let context = delegate.persistentContainer.viewContext
+        detailPresenter = DetailPresenter(view: self, member: member, context: context)
     }
     
     private func setupViewsHierarchy() {
         [editButton, memberImage, detailGrayView].forEach { view.addSubview($0) }
         detailGrayView.addSubview(memberDataTable)
-    }
-    
-    func updateMemberData() {
-        memberDataTable.reloadData()
     }
     
     private func setupLayout() {
@@ -116,11 +118,20 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
         }
     }
     
-    // MARK: Actions
+    func updateMemberData() {
+        memberDataTable.reloadData()
+    }
     
     @objc
-    func editMemberProfileButtonPressed() {
-        detailPresenter?.editMemberProfile()
+    func editButtonPressed() {
+        isEditingEnabled.toggle()
+        editButton.setTitle(isEditingEnabled ? "Save" : "Edit", for: .normal)
+        editButton.backgroundColor = isEditingEnabled ? .systemBlue : .white
+        
+        if !isEditingEnabled {
+            detailPresenter?.saveContext()
+        }
+        memberDataTable.reloadData()
     }
 }
 
@@ -139,22 +150,25 @@ extension DetailViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "detailDefaultCell", for: indexPath) as? DetailViewCell else  {
             return UITableViewCell()
         }
+        cell.selectionStyle = .none
+        cell.isUserInteractionEnabled = isEditingEnabled
         
-        let data: (title: String, iconName: String)
         switch indexPath.row {
         case 0:
-            data = (title: detailPresenter?.getMemberName() ?? "Choose member name", iconName: "person")
+            cell.configureCell(with: detailPresenter?.getMemberName() ?? "", iconName: "person", isEditable: isEditingEnabled)
         case 1:
-            data = (title: "Дата рождения", iconName: "calendar")
+            if let dateOfBirth = member.dateOfBirth {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateStyle = .medium
+                cell.configureCell(with: dateFormatter.string(from: dateOfBirth), iconName: "calendar", isEditable: isEditingEnabled)
+            } else { cell.configureCell(with: "", iconName: "calendar", isEditable: isEditingEnabled) }
         case 2:
-            data = (title: detailPresenter?.getMemberGender() ?? "Choose member gender", iconName: "person.2.circle")
+            cell.configureCell(with: detailPresenter?.getMemberGender() ?? "", iconName: "person.2.circle", isEditable: isEditingEnabled)
         case 3:
-            data = (title: detailPresenter?.getMemberSong() ?? "Choose member song", iconName: "music.note")
+            cell.configureCell(with: detailPresenter?.getMemberSong() ?? "", iconName: "music.note", isEditable: isEditingEnabled)
         default:
-            data = (title: "", iconName: "")
+            break
         }
-        
-        cell.configureCell(with: data.title, iconName: data.iconName)
         return cell
     }
 }

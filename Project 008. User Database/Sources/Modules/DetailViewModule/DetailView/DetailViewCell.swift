@@ -4,18 +4,18 @@ import SnapKit
 
 final class DetailViewCell: UITableViewCell {
     
-    // MARK: UI Elements & Oulets
-    
-    public var iconView: UIImageView = {
+    private lazy var iconView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .systemBlue
         return imageView
     }()
     
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
-        return label
+    private lazy var textField: UITextField = {
+        let textField = UITextField()
+        textField.textAlignment = .left
+        textField.isUserInteractionEnabled = false
+        return textField
     }()
  
     // MARK: Initializers
@@ -33,12 +33,7 @@ final class DetailViewCell: UITableViewCell {
     // MARK: Setup & Layout
     
     private func setupViewsHierarchy() {
-        [iconView, titleLabel].forEach { contentView.addSubview($0) }}
-    
-    func configureCell(with title: String, iconName: String) {
-        titleLabel.text = title
-        iconView.image = UIImage(systemName: iconName)
-    }
+        [iconView, textField].forEach { contentView.addSubview($0) }}
     
     private func setupLayout() {
         iconView.snp.makeConstraints { make in
@@ -47,11 +42,35 @@ final class DetailViewCell: UITableViewCell {
             make.width.height.equalTo(30)
         }
         
-        titleLabel.snp.makeConstraints { make in
+        textField.snp.makeConstraints { make in
             make.leading.equalTo(iconView.snp.trailing).offset(15)
-            make.centerY.equalTo(contentView)
-            make.trailing.equalTo(contentView).offset(-15)
+            make.centerY.equalToSuperview()
         }
+    }
+    
+    func configureCell(with title: String?, iconName: String, isEditable: Bool) {
+        iconView.image = UIImage(systemName: iconName)
+        
+        if let title = title, !title.isEmpty {
+            textField.text = title
+            textField.textColor = UIColor.label
+        } else {
+            var placeholderText = ""
+            switch iconName {
+            case "calendar":
+                placeholderText = "Choose member date of birth"
+            case "person.2.circle":
+                placeholderText = "Choose member gender"
+            case "music.note":
+                placeholderText = "Choose member song"
+            default:
+                break
+            }
+        
+            textField.text = placeholderText
+            textField.textColor = UIColor.secondaryLabel
+        }
+        textField.isUserInteractionEnabled = isEditable
     }
 }
  

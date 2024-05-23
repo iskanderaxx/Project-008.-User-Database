@@ -2,14 +2,9 @@
 import UIKit
 import SnapKit
 
-// MARK: - Main Controller
-
 final class MainViewController: UIViewController, MainViewProtocol {
-   
-    // MARK: State
     
     var delegate = UIApplication.shared.delegate
-    
     private var presenter: MainPresenter?
     private var members = [MemberList]()
     
@@ -40,7 +35,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 10
-        button.addTarget(self, action: #selector(orangeButtonPressed), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addMemberButtonPressed), for: .touchUpInside)
         return button
     }()
     
@@ -57,8 +52,6 @@ final class MainViewController: UIViewController, MainViewProtocol {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.layer.cornerRadius = 20
-//        tableView.rowHeight = UITableView.automaticDimension
-//        tableView.estimatedRowHeight = 44
         tableView.layer.masksToBounds = true
         return tableView
     }()
@@ -77,12 +70,16 @@ final class MainViewController: UIViewController, MainViewProtocol {
     // MARK: Setup & Layout
     
     private func setupTitleColor() {
-        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.systemBlue]
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     private func setupMainPresenter() {
-        presenter = MainPresenter(view: self, controller: self)
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError()
+        }
+        let context = appDelegate.persistentContainer.viewContext
+        presenter = MainPresenter(view: self, context: context)
         presenter?.getAllMembers()
     }
     
@@ -114,14 +111,14 @@ final class MainViewController: UIViewController, MainViewProtocol {
             make.top.equalTo(grayView.snp.top).offset(15)
             make.leading.equalTo(grayView.snp.leading).offset(15)
             make.trailing.equalTo(grayView.snp.trailing).offset(-15)
-//            make.height.equalTo(tableView.rowHeight * CGFloat(members.count))
-            
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
+    // MARK: Actions
+    
     @objc
-    private func orangeButtonPressed() {
+    private func addMemberButtonPressed() {
         guard let text = textField.text, !text.isEmpty else { return }
         
         presenter?.createMember(name: text)
@@ -132,12 +129,12 @@ final class MainViewController: UIViewController, MainViewProtocol {
 // MARK: - Extensions
 
 extension MainViewController {
-    func showInfo(_ members: [MemberList]) {
+    func showInformation(about members: [MemberList]) {
         self.members = members
         self.tableView.reloadData()
     }
     
-    func showError(_ error: any Error) {
+    func showError(with error: Error) {
         let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)

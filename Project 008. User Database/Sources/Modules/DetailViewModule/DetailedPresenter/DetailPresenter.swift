@@ -8,33 +8,37 @@ protocol DetailViewProtocol: AnyObject {
 final class DetailPresenter {
     private weak var view: DetailViewProtocol?
     private let member: MemberList
+    private var context: NSManagedObjectContext
     
-    init(view: DetailViewProtocol, member: MemberList) {
+    init(view: DetailViewProtocol, member: MemberList, context: NSManagedObjectContext) {
         self.view = view
         self.member = member
+        self.context = context
     }
     
-    func getMemberName() -> String {
-        guard let name = member.name else { return "Choose member name" }
-        return name
+    func getMemberName() -> String { member.name ?? "" }
+    
+    func getMemberDateOfBirth() -> Date { member.dateOfBirth ?? Date() }
+    
+    func getMemberGender() -> String { member.gender ?? "" }
+    
+    func getMemberSong() -> String { member.song ?? "" }
+    
+    func updateMember(name: String?, dateOfBirth: Date?, gender: String?, song: String?) {
+        member.name = name
+        member.dateOfBirth = dateOfBirth
+        member.gender = gender
+        member.song = song
+        
+        saveContext()
+        view?.updateMemberData()
     }
     
-//    func getMemberDateOfBirth() -> String {
-//        guard let date = member.dateOfBirth else { return "Choose member dateofBirth" }
-//        return date
-//    }
-    
-    func getMemberGender() -> String {
-        guard let gender = member.gender else { return "Choose member gender" }
-        return gender
-    }
-    
-    func getMemberSong() -> String {
-        guard let song = member.song else { return "Choose member song" }
-        return song
-    }
-    
-    func editMemberProfile() {
-
+    func saveContext() {
+        do {
+            try context.save()
+        } catch {
+            print("Error saving context: \(error)")
+        }
     }
 }
