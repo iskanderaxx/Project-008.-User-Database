@@ -24,6 +24,10 @@ final class DetailPresenter {
     
     func getMemberSong() -> String { member.song ?? "" }
     
+    func setMemberDateOfBirth(_ date: Date) { member.dateOfBirth = date }
+    
+    func setMemberGender(_ gender: String) { member.gender = gender }
+    
     func updateMember(name: String?, dateOfBirth: Date?, gender: String?, song: String?) {
         member.name = name
         member.dateOfBirth = dateOfBirth
@@ -37,6 +41,7 @@ final class DetailPresenter {
     func saveContext() {
         do {
             try context.save()
+            view?.updateMemberData()
         } catch {
             print("Error saving context: \(error)")
         }

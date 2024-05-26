@@ -1,6 +1,7 @@
 
 import UIKit
 import SnapKit
+import CoreData
 
 final class DetailViewController: UIViewController, DetailViewProtocol {
 
@@ -78,10 +79,13 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
     // MARK: Setup & Layout
     
     private func setupDetailPresenter() {
+//        detailPresenter = DetailPresenter(view: self, member: member, context: member.managedObjectContext ?? NSManagedObjectContext())
+        
         guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
             fatalError("Error: fatal error")
         }
-        let context = delegate.persistentContainer.viewContext
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        context.parent = delegate.persistentContainer.viewContext
         detailPresenter = DetailPresenter(view: self, member: member, context: context)
     }
     
@@ -118,20 +122,70 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
         }
     }
     
+    private func presentGenderSelectionAlert(for indexPath: IndexPath) {
+        let alert = UIAlertController(title: "Choose gender", message: nil, preferredStyle: .actionSheet)
+        let genders = ["Male", "Female", "Non-Binary"]
+        
+        genders.forEach { gender in
+            alert.addAction(UIAlertAction(title: gender, style: .default, handler: { [weak self] _ in
+                self?.detailPresenter?.setMemberGender(gender)
+                self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
+            }))
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    private func presentDatePickerAlert(for indexPath: IndexPath) {
+        let alert = UIAlertController(title: "Select date of birth", message: nil, preferredStyle: .actionSheet)
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        
+        if #available(iOS 14.0, *) { datePicker.preferredDatePickerStyle = .wheels }
+        alert.view.addSubview(datePicker)
+        
+        datePicker.snp.makeConstraints { make in
+            make.top.equalTo(alert.view).offset(20)
+            make.leading.equalTo(alert.view).offset(20)
+            make.trailing.equalTo(alert.view).offset(-20)
+            make.bottom.equalTo(alert.view).offset(-60)
+        }
+        
+        let selectAction = UIAlertAction(title: "Select", style: .default) { [weak self] _ in
+            self?.detailPresenter?.setMemberDateOfBirth(datePicker.date)
+            self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
+        }
+//        
+//        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+//        
+        alert.addAction(selectAction)
+//        alert.addAction(cancelAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
     func updateMemberData() {
         memberDataTable.reloadData()
     }
     
+    // MARK: Actions
+    
     @objc
     func editButtonPressed() {
         isEditingEnabled.toggle()
+        memberDataTable.visibleCells.forEach {
+            if let cell = $0 as? DetailViewCell {
+                cell.setEditing(isEditingEnabled, animated: true)
+            }
+        }
+        
         editButton.setTitle(isEditingEnabled ? "Save" : "Edit", for: .normal)
         editButton.backgroundColor = isEditingEnabled ? .systemBlue : .white
         
         if !isEditingEnabled {
             detailPresenter?.saveContext()
         }
-        memberDataTable.reloadData()
     }
 }
 
@@ -150,22 +204,20 @@ extension DetailViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "detailDefaultCell", for: indexPath) as? DetailViewCell else  {
             return UITableViewCell()
         }
-        cell.selectionStyle = .none
-        cell.isUserInteractionEnabled = isEditingEnabled
         
         switch indexPath.row {
         case 0:
-            cell.configureCell(with: detailPresenter?.getMemberName() ?? "", iconName: "person", isEditable: isEditingEnabled)
+            cell.configureCell(with: detailPresenter?.getMemberName() ?? "", iconName: "person")
         case 1:
             if let dateOfBirth = member.dateOfBirth {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateStyle = .medium
-                cell.configureCell(with: dateFormatter.string(from: dateOfBirth), iconName: "calendar", isEditable: isEditingEnabled)
-            } else { cell.configureCell(with: "", iconName: "calendar", isEditable: isEditingEnabled) }
+                cell.configureCell(with: dateFormatter.string(from: dateOfBirth), iconName: "calendar")
+            } else { cell.configureCell(with: "", iconName: "calendar") }
         case 2:
-            cell.configureCell(with: detailPresenter?.getMemberGender() ?? "", iconName: "person.2.circle", isEditable: isEditingEnabled)
+            cell.configureCell(with: detailPresenter?.getMemberGender() ?? "", iconName: "person.2.circle")
         case 3:
-            cell.configureCell(with: detailPresenter?.getMemberSong() ?? "", iconName: "music.note", isEditable: isEditingEnabled)
+            cell.configureCell(with: detailPresenter?.getMemberSong() ?? "", iconName: "music.note")
         default:
             break
         }
@@ -176,5 +228,11 @@ extension DetailViewController: UITableViewDataSource {
 extension DetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        if isEditingEnabled && indexPath.row == 1 {
+            presentDatePickerAlert(for: indexPath)
+        } else if isEditingEnabled && indexPath.row == 2 {
+            presentGenderSelectionAlert(for: indexPath)
+        }
     }
 }

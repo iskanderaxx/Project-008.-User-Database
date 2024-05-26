@@ -48,7 +48,7 @@ final class DetailViewCell: UITableViewCell {
         }
     }
     
-    func configureCell(with title: String?, iconName: String, isEditable: Bool) {
+    func configureCell(with title: String?, iconName: String) { // , isEditable: Bool
         iconView.image = UIImage(systemName: iconName)
         
         if let title = title, !title.isEmpty {
@@ -62,7 +62,7 @@ final class DetailViewCell: UITableViewCell {
             case "person.2.circle":
                 placeholderText = "Choose member gender"
             case "music.note":
-                placeholderText = "Choose member song"
+                placeholderText = "Enter member song"
             default:
                 break
             }
@@ -70,7 +70,11 @@ final class DetailViewCell: UITableViewCell {
             textField.text = placeholderText
             textField.textColor = UIColor.secondaryLabel
         }
-        textField.isUserInteractionEnabled = isEditable
+        
+        func setEditing(_ editing: Bool) {
+            textField.isUserInteractionEnabled = editing
+        }
+//        textField.isUserInteractionEnabled = isEditable
     }
 }
  
