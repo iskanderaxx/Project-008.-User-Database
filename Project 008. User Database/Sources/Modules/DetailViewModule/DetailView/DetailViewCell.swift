@@ -4,6 +4,18 @@ import SnapKit
 
 final class DetailViewCell: UITableViewCell {
     
+    // MARK: Initializers
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupViewsHierarchy()
+        setupLayout()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private lazy var iconView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -17,18 +29,6 @@ final class DetailViewCell: UITableViewCell {
         textField.isUserInteractionEnabled = false
         return textField
     }()
- 
-    // MARK: Initializers
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupViewsHierarchy()
-        setupLayout()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     // MARK: Setup & Layout
     
@@ -48,7 +48,7 @@ final class DetailViewCell: UITableViewCell {
         }
     }
     
-    func configureCell(with title: String?, iconName: String) { // , isEditable: Bool
+    func configureCell(with title: String?, iconName: String) {
         iconView.image = UIImage(systemName: iconName)
         
         if let title = title, !title.isEmpty {
@@ -66,7 +66,6 @@ final class DetailViewCell: UITableViewCell {
             default:
                 break
             }
-        
             textField.text = placeholderText
             textField.textColor = UIColor.secondaryLabel
         }
@@ -74,7 +73,6 @@ final class DetailViewCell: UITableViewCell {
         func setEditing(_ editing: Bool) {
             textField.isUserInteractionEnabled = editing
         }
-//        textField.isUserInteractionEnabled = isEditable
     }
 }
  

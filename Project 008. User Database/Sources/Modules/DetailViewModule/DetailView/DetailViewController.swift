@@ -4,12 +4,21 @@ import SnapKit
 import CoreData
 
 final class DetailViewController: UIViewController, DetailViewProtocol {
-
-    // MARK: Data
     
     private let member: MemberList
     private var detailPresenter: DetailPresenter?
     private var isEditingEnabled = false
+    
+    // MARK: Initializers
+    
+    init(member: MemberList) {
+        self.member = member
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: UI Elements & Outlets
     
@@ -44,7 +53,7 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
         return grayView
     }()
     
-    lazy var memberDataTable: UITableView = {
+    private lazy var memberDataTable: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(DetailViewCell.self,
                            forCellReuseIdentifier: "detailDefaultCell")
@@ -55,17 +64,6 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
         tableView.isScrollEnabled = false
         return tableView
     }()
-    
-    // MARK: Initializers
-    
-    init(member: MemberList) {
-        self.member = member
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     // MARK: Lifecycle
     
@@ -79,8 +77,6 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
     // MARK: Setup & Layout
     
     private func setupDetailPresenter() {
-//        detailPresenter = DetailPresenter(view: self, member: member, context: member.managedObjectContext ?? NSManagedObjectContext())
-        
         guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
             fatalError("Error: fatal error")
         }
@@ -122,50 +118,8 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
         }
     }
     
-    private func presentGenderSelectionAlert(for indexPath: IndexPath) {
-        let alert = UIAlertController(title: "Choose gender", message: nil, preferredStyle: .actionSheet)
-        let genders = ["Male", "Female", "Non-Binary"]
-        
-        genders.forEach { gender in
-            alert.addAction(UIAlertAction(title: gender, style: .default, handler: { [weak self] _ in
-                self?.detailPresenter?.setMemberGender(gender)
-                self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
-            }))
-        }
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        
-        present(alert, animated: true, completion: nil)
-    }
-    
-    private func presentDatePickerAlert(for indexPath: IndexPath) {
-        let alert = UIAlertController(title: "Select date of birth", message: nil, preferredStyle: .actionSheet)
-        let datePicker = UIDatePicker()
-        datePicker.datePickerMode = .date
-        
-        if #available(iOS 14.0, *) { datePicker.preferredDatePickerStyle = .wheels }
-        alert.view.addSubview(datePicker)
-        
-        datePicker.snp.makeConstraints { make in
-            make.top.equalTo(alert.view).offset(20)
-            make.leading.equalTo(alert.view).offset(20)
-            make.trailing.equalTo(alert.view).offset(-20)
-            make.bottom.equalTo(alert.view).offset(-60)
-        }
-        
-        let selectAction = UIAlertAction(title: "Select", style: .default) { [weak self] _ in
-            self?.detailPresenter?.setMemberDateOfBirth(datePicker.date)
-            self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
-        }
-//        
-//        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-//        
-        alert.addAction(selectAction)
-//        alert.addAction(cancelAction)
-        present(alert, animated: true, completion: nil)
-    }
-    
-    func updateMemberData() {
+    func updateMemberData(name: String?, dateOfBirth: Date?, gender: String?, song: String?) {
+        detailPresenter?.updateMember(name: name, dateOfBirth: dateOfBirth, gender: gender, song: song)
         memberDataTable.reloadData()
     }
     
@@ -174,18 +128,11 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
     @objc
     func editButtonPressed() {
         isEditingEnabled.toggle()
-        memberDataTable.visibleCells.forEach {
-            if let cell = $0 as? DetailViewCell {
-                cell.setEditing(isEditingEnabled, animated: true)
-            }
-        }
-        
+
         editButton.setTitle(isEditingEnabled ? "Save" : "Edit", for: .normal)
         editButton.backgroundColor = isEditingEnabled ? .systemBlue : .white
         
-        if !isEditingEnabled {
-            detailPresenter?.saveContext()
-        }
+        if !isEditingEnabled { detailPresenter?.saveContext() }
     }
 }
 
@@ -204,7 +151,7 @@ extension DetailViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "detailDefaultCell", for: indexPath) as? DetailViewCell else  {
             return UITableViewCell()
         }
-        
+
         switch indexPath.row {
         case 0:
             cell.configureCell(with: detailPresenter?.getMemberName() ?? "", iconName: "person")
@@ -228,11 +175,84 @@ extension DetailViewController: UITableViewDataSource {
 extension DetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+         
+         guard isEditingEnabled else { return }
+         
+         switch indexPath.row {
+         case 0:
+             presentTextInputAlert(for: indexPath, title: "Edit Name", text: detailPresenter?.getMemberName(), placeholder: "Enter name") { [weak self] newName in
+                 self?.detailPresenter?.setMemberName(newName)
+                 self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
+             }
+         case 1:
+             presentDatePickerAlert(for: indexPath)
+         case 2:
+             presentGenderSelectionAlert(for: indexPath)
+         case 3:
+             presentTextInputAlert(for: indexPath, title: "Edit Song", text: detailPresenter?.getMemberSong(), placeholder: "Enter song") { [weak self] newSong in
+                 self?.detailPresenter?.setMemberSong(newSong)
+                 self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
+             }
+         default:
+             break
+         }
+     }
+}
+
+private extension DetailViewController {
+    private func presentGenderSelectionAlert(for indexPath: IndexPath) {
+        let alert = UIAlertController(title: "Choose gender", message: nil, preferredStyle: .actionSheet)
+        let genders = ["Male", "Female", "Non-Binary"]
         
-        if isEditingEnabled && indexPath.row == 1 {
-            presentDatePickerAlert(for: indexPath)
-        } else if isEditingEnabled && indexPath.row == 2 {
-            presentGenderSelectionAlert(for: indexPath)
+        genders.forEach { gender in
+            alert.addAction(UIAlertAction(title: gender, style: .default, handler: { [weak self] _ in
+                self?.detailPresenter?.setMemberGender(gender)
+                self?.detailPresenter?.saveContext()
+                self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
+            }))
         }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    private func presentDatePickerAlert(for indexPath: IndexPath) {
+        let alert = UIAlertController(title: "Select date of birth", message: nil, preferredStyle: .actionSheet)
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        
+        if #available(iOS 14.0, *) { datePicker.preferredDatePickerStyle = .wheels }
+        alert.view.addSubview(datePicker)
+        
+        datePicker.snp.makeConstraints { make in
+            make.top.equalTo(alert.view).offset(20)
+            make.leading.equalTo(alert.view).offset(20)
+            make.trailing.equalTo(alert.view).offset(-20)
+            make.bottom.equalTo(alert.view).offset(-60)
+        }
+        
+        let selectAction = UIAlertAction(title: "Select", style: .default) { [weak self] _ in
+            self?.detailPresenter?.setMemberDateOfBirth(datePicker.date)
+            self?.detailPresenter?.saveContext()
+            self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
+        }
+        alert.addAction(selectAction)
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    private func presentTextInputAlert(for indexPath: IndexPath, title: String, text: String?, placeholder: String, completion: @escaping (String) -> Void) {
+        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        alert.addTextField { textField in
+            textField.text = text
+            textField.placeholder = placeholder
+        }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { _ in
+            if let textField = alert.textFields?.first, let inputText = textField.text {
+                completion(inputText)
+            }
+        }))
+        present(alert, animated: true, completion: nil)
     }
 }

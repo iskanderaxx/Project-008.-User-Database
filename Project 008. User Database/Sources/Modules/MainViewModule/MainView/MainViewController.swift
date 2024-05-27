@@ -5,7 +5,7 @@ import SnapKit
 final class MainViewController: UIViewController, MainViewProtocol {
     
     var delegate = UIApplication.shared.delegate
-    private var presenter: MainPresenter?
+    var presenter: MainPresenter?
     private var members = [MemberList]()
     
     // MARK: UI Elements & Oulets
