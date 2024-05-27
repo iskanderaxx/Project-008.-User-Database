@@ -3,13 +3,14 @@ import UIKit
 import SnapKit
 import CoreData
 
-final class DetailViewController: UIViewController, DetailViewProtocol {
+final class DetailViewController: UIViewController { // , DetailViewProtocol
     
     private let member: MemberList
-    private var detailPresenter: DetailPresenter?
+//    private var detailPresenter: DetailPresenter?
+    private let coreDataService = CoreDataService.shared
     private var isEditingEnabled = false
     
-    // MARK: Initializers
+//     MARK: Initializers
     
     init(member: MemberList) {
         self.member = member
@@ -69,20 +70,20 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupDetailPresenter()
+//        setupDetailPresenter()
         setupViewsHierarchy()
         setupLayout()
     }
     
     // MARK: Setup & Layout
     
-    private func setupDetailPresenter() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            fatalError()
-        }
-        let context = appDelegate.persistentContainer.viewContext
-        detailPresenter = DetailPresenter(view: self, member: member, context: context)
-    }
+//    private func setupDetailPresenter() {
+//        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+//            fatalError()
+//        }
+//        let context = appDelegate.persistentContainer.viewContext
+//        detailPresenter = DetailPresenter(view: self, member: member, context: context)
+//    }
     
     private func setupViewsHierarchy() {
         [editButton, memberImage, detailGrayView].forEach { view.addSubview($0) }
@@ -117,10 +118,10 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
         }
     }
     
-    func updateMemberData(name: String?, dateOfBirth: Date?, gender: String?, song: String?) {
-        detailPresenter?.updateMember(name: name, dateOfBirth: dateOfBirth, gender: gender, song: song)
-        memberDataTable.reloadData()
-    }
+//    func updateMemberData(name: String?, dateOfBirth: Date?, gender: String?, song: String?) {
+//        detailPresenter?.updateMember(name: name, dateOfBirth: dateOfBirth, gender: gender, song: song)
+//        memberDataTable.reloadData()
+//    }
     
     func showError(with error: Error) {
         let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
@@ -137,7 +138,8 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
         editButton.setTitle(isEditingEnabled ? "Save" : "Edit", for: .normal)
         editButton.backgroundColor = isEditingEnabled ? .systemBlue : .white
         
-        if !isEditingEnabled { detailPresenter?.saveContext() }
+//        if !isEditingEnabled { detailPresenter?.saveContext() }
+        if !isEditingEnabled { coreDataService.saveContext() }
     }
 }
 
@@ -159,7 +161,7 @@ extension DetailViewController: UITableViewDataSource {
 
         switch indexPath.row {
         case 0:
-            cell.configureCell(with: detailPresenter?.getMemberName() ?? "", iconName: "person")
+            cell.configureCell(with: member.name ?? "", iconName: "person")
         case 1:
             if let dateOfBirth = member.dateOfBirth {
                 let dateFormatter = DateFormatter()
@@ -167,9 +169,9 @@ extension DetailViewController: UITableViewDataSource {
                 cell.configureCell(with: dateFormatter.string(from: dateOfBirth), iconName: "calendar")
             } else { cell.configureCell(with: "", iconName: "calendar") }
         case 2:
-            cell.configureCell(with: detailPresenter?.getMemberGender() ?? "", iconName: "person.2.circle")
+            cell.configureCell(with: member.gender ?? "", iconName: "person.2.circle")
         case 3:
-            cell.configureCell(with: detailPresenter?.getMemberSong() ?? "", iconName: "music.note")
+            cell.configureCell(with: member.song ?? "", iconName: "music.note")
         default:
             break
         }
@@ -181,26 +183,26 @@ extension DetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
          
-         guard isEditingEnabled else { return }
-         
-         switch indexPath.row {
-         case 0:
-             presentTextInputAlert(for: indexPath, title: "Edit Name", text: detailPresenter?.getMemberName(), placeholder: "Enter name") { [weak self] newName in
-                 self?.detailPresenter?.setMemberName(newName)
-                 self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
-             }
-         case 1:
-             presentDatePickerAlert(for: indexPath)
-         case 2:
-             presentGenderSelectionAlert(for: indexPath)
-         case 3:
-             presentTextInputAlert(for: indexPath, title: "Edit Song", text: detailPresenter?.getMemberSong(), placeholder: "Enter song") { [weak self] newSong in
-                 self?.detailPresenter?.setMemberSong(newSong)
-                 self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
-             }
-         default:
-             break
-         }
+        if isEditingEnabled {
+            switch indexPath.row {
+            case 0:
+                presentTextInputAlert(for: indexPath, title: "Edit Name", text: member.name, placeholder: "Enter name") { [weak self] newName in
+                    self?.member.name = newName
+                    self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
+                }
+            case 1:
+                presentDatePickerAlert(for: indexPath)
+            case 2:
+                presentGenderSelectionAlert(for: indexPath)
+            case 3:
+                presentTextInputAlert(for: indexPath, title: "Edit Song", text: member.song, placeholder: "Enter song") { [weak self] newSong in
+                    self?.member.song = newSong
+                    self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
+                }
+            default:
+                break
+            }
+        }
      }
 }
 
@@ -211,8 +213,8 @@ private extension DetailViewController {
         
         genders.forEach { gender in
             alert.addAction(UIAlertAction(title: gender, style: .default, handler: { [weak self] _ in
-                self?.detailPresenter?.setMemberGender(gender)
-                self?.detailPresenter?.saveContext()
+                self?.member.gender = gender
+                self?.coreDataService.saveContext()
                 self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
             }))
         }
@@ -237,8 +239,8 @@ private extension DetailViewController {
         }
         
         let selectAction = UIAlertAction(title: "Select", style: .default) { [weak self] _ in
-            self?.detailPresenter?.setMemberDateOfBirth(datePicker.date)
-            self?.detailPresenter?.saveContext()
+            self?.member.dateOfBirth = datePicker.date
+            self?.coreDataService.saveContext()
             self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
         }
         alert.addAction(selectAction)

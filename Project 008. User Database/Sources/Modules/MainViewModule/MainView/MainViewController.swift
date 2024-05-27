@@ -4,9 +4,9 @@ import SnapKit
 
 final class MainViewController: UIViewController, MainViewProtocol {
     
-//    var appDelegate = UIApplication.shared.delegate
     private var presenter: MainPresenter?
     private var members = [MemberList]()
+    private var coreDataService = CoreDataService.shared
     
     // MARK: UI Elements & Oulets
     
@@ -84,11 +84,11 @@ final class MainViewController: UIViewController, MainViewProtocol {
     }
     
     private func setupMainPresenter() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            fatalError()
-        }
-        let context = appDelegate.persistentContainer.viewContext
-        presenter = MainPresenter(view: self, context: context)
+//        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+//            fatalError()
+//        }
+//        let context = appDelegate.persistentContainer.viewContext
+        presenter = MainPresenter(view: self) // , context: context
         presenter?.getAllMembers()
     }
     

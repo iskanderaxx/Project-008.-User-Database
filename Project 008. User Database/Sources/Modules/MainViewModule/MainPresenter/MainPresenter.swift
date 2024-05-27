@@ -1,6 +1,4 @@
 
-import CoreData
-
 protocol MainViewProtocol: AnyObject {
     func showData(of members: [MemberList])
     func showError(with error: Error)
@@ -8,55 +6,30 @@ protocol MainViewProtocol: AnyObject {
 
 final class MainPresenter {
     private weak var view: MainViewProtocol?
-    private var context: NSManagedObjectContext
+    private var coreDataService = CoreDataService.shared
     
-    init(view: MainViewProtocol, context: NSManagedObjectContext) {
+    init(view: MainViewProtocol) {
         self.view = view
-        self.context = context
     }
     
     // MARK: CRUD stack
      
     func getAllMembers() {
-        do {
-            let members = try context.fetch(MemberList.fetchRequest())
-            view?.showData(of: members)
-
-        } catch {
-            view?.showError(with: error)
-        }
+        let members = coreDataService.getAllMembers()
+        view?.showData(of: members)
     }
     
     func createMember(name: String) {
-        let newMember = MemberList(context: context)
-        newMember.name = name
-        
-        do {
-            try context.save()
-            getAllMembers()
-        } catch {
-            view?.showError(with: error)
-        }
+        coreDataService.createMember(name: name)
+        getAllMembers()
     }
     
     func deleteMember(_ member: MemberList) {
-        context.delete(member)
-        
-        do {
-            try context.save()
-            getAllMembers()
-        } catch {
-            view?.showError(with: error)
-        }
+        coreDataService.deleteMember(member)
+        getAllMembers()
     }
     
     func updateMember(_ member: MemberList, newName: String) {
-        member.name = newName
-        
-        do {
-            try context.save()
-        } catch {
-            view?.showError(with: error)
-        }
+        coreDataService.updateMember(member, newName: newName)
     }
 }
