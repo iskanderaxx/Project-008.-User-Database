@@ -4,8 +4,8 @@ import SnapKit
 
 final class MainViewController: UIViewController, MainViewProtocol {
     
-    var delegate = UIApplication.shared.delegate
-    var presenter: MainPresenter?
+//    var appDelegate = UIApplication.shared.delegate
+    private var presenter: MainPresenter?
     private var members = [MemberList]()
     
     // MARK: UI Elements & Oulets
@@ -53,6 +53,11 @@ final class MainViewController: UIViewController, MainViewProtocol {
         tableView.delegate = self
         tableView.layer.cornerRadius = 20
         tableView.layer.masksToBounds = true
+        
+        tableView.estimatedRowHeight = 44.0
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.isScrollEnabled = false
+        
         return tableView
     }()
     
@@ -66,6 +71,10 @@ final class MainViewController: UIViewController, MainViewProtocol {
         setupViewsHierarchy()
         setupLayout()
     }
+    
+    deinit {
+         tableView.removeObserver(self, forKeyPath: "contentSize")
+     }
     
     // MARK: Setup & Layout
     
@@ -84,7 +93,8 @@ final class MainViewController: UIViewController, MainViewProtocol {
     }
     
     private func setupViewsHierarchy() {
-        [textField, blueButton, grayView, tableView].forEach { view.addSubview($0) }
+        [textField, blueButton, grayView].forEach { view.addSubview($0) }
+        grayView.addSubview(tableView)
     }
     
     private func setupLayout() {
@@ -111,8 +121,9 @@ final class MainViewController: UIViewController, MainViewProtocol {
             make.top.equalTo(grayView.snp.top).offset(15)
             make.leading.equalTo(grayView.snp.leading).offset(15)
             make.trailing.equalTo(grayView.snp.trailing).offset(-15)
-            make.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.height.equalTo(0)
         }
+        tableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
     }
     
     // MARK: Actions
@@ -129,7 +140,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
 // MARK: - Extensions
 
 extension MainViewController {
-    func showInformation(about members: [MemberList]) {
+    func showData(of members: [MemberList]) {
         self.members = members
         self.tableView.reloadData()
     }
@@ -138,6 +149,14 @@ extension MainViewController {
         let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "contentSize" {
+            tableView.snp.updateConstraints { make in
+                make.height.equalTo(tableView.contentSize.height)
+            }
+        }
     }
 }
 

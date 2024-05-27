@@ -3,10 +3,11 @@ import CoreData
 
 protocol DetailViewProtocol: AnyObject {
     func updateMemberData(name: String?, dateOfBirth: Date?, gender: String?, song: String?)
+    func showError(with error: Error)
 }
 
 final class DetailPresenter {
-    weak var view: DetailViewProtocol?
+   weak var view: DetailViewProtocol?
     private let member: MemberList
     private var context: NSManagedObjectContext
     

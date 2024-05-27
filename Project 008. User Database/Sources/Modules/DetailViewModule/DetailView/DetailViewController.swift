@@ -77,11 +77,10 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
     // MARK: Setup & Layout
     
     private func setupDetailPresenter() {
-        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
-            fatalError("Error: fatal error")
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError()
         }
-        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        context.parent = delegate.persistentContainer.viewContext
+        let context = appDelegate.persistentContainer.viewContext
         detailPresenter = DetailPresenter(view: self, member: member, context: context)
     }
     
@@ -111,7 +110,7 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
         
         memberDataTable.snp.makeConstraints { make in
             make.centerX.equalTo(detailGrayView)
-            make.top.equalTo(detailGrayView).offset(40)
+            make.top.equalTo(detailGrayView).offset(15)
             make.leading.equalTo(detailGrayView.snp.leading).offset(15)
             make.trailing.equalTo(detailGrayView.snp.trailing).offset(-15)
             make.height.equalTo(4 * 60).priority(.high)
@@ -121,6 +120,12 @@ final class DetailViewController: UIViewController, DetailViewProtocol {
     func updateMemberData(name: String?, dateOfBirth: Date?, gender: String?, song: String?) {
         detailPresenter?.updateMember(name: name, dateOfBirth: dateOfBirth, gender: gender, song: song)
         memberDataTable.reloadData()
+    }
+    
+    func showError(with error: Error) {
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
     
     // MARK: Actions

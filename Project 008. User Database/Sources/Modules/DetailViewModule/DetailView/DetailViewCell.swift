@@ -16,6 +16,8 @@ final class DetailViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: UI Elements & Oulets
+    
     private lazy var iconView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -68,10 +70,6 @@ final class DetailViewCell: UITableViewCell {
             }
             textField.text = placeholderText
             textField.textColor = UIColor.secondaryLabel
-        }
-        
-        func setEditing(_ editing: Bool) {
-            textField.isUserInteractionEnabled = editing
         }
     }
 }

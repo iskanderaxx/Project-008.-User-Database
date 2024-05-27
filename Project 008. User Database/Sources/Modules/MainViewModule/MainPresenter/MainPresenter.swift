@@ -2,13 +2,12 @@
 import CoreData
 
 protocol MainViewProtocol: AnyObject {
-    func showInformation(about members: [MemberList])
+    func showData(of members: [MemberList])
     func showError(with error: Error)
 }
 
 final class MainPresenter {
-    
-    weak var view: MainViewProtocol?
+    private weak var view: MainViewProtocol?
     private var context: NSManagedObjectContext
     
     init(view: MainViewProtocol, context: NSManagedObjectContext) {
@@ -21,7 +20,7 @@ final class MainPresenter {
     func getAllMembers() {
         do {
             let members = try context.fetch(MemberList.fetchRequest())
-            view?.showInformation(about: members)
+            view?.showData(of: members)
 
         } catch {
             view?.showError(with: error)
