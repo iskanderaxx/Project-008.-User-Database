@@ -3,14 +3,13 @@ import UIKit
 import SnapKit
 import CoreData
 
-final class DetailViewController: UIViewController { // , DetailViewProtocol
+final class DetailViewController: UIViewController, DetailViewProtocol {
     
     private let member: MemberList
-//    private var detailPresenter: DetailPresenter?
-    private let coreDataService = CoreDataService.shared
+    private let coreDataManager = CoreDataManager.shared
     private var isEditingEnabled = false
     
-//     MARK: Initializers
+    // MARK: Initializers
     
     init(member: MemberList) {
         self.member = member
@@ -70,20 +69,11 @@ final class DetailViewController: UIViewController { // , DetailViewProtocol
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        setupDetailPresenter()
         setupViewsHierarchy()
         setupLayout()
     }
     
     // MARK: Setup & Layout
-    
-//    private func setupDetailPresenter() {
-//        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-//            fatalError()
-//        }
-//        let context = appDelegate.persistentContainer.viewContext
-//        detailPresenter = DetailPresenter(view: self, member: member, context: context)
-//    }
     
     private func setupViewsHierarchy() {
         [editButton, memberImage, detailGrayView].forEach { view.addSubview($0) }
@@ -118,11 +108,6 @@ final class DetailViewController: UIViewController { // , DetailViewProtocol
         }
     }
     
-//    func updateMemberData(name: String?, dateOfBirth: Date?, gender: String?, song: String?) {
-//        detailPresenter?.updateMember(name: name, dateOfBirth: dateOfBirth, gender: gender, song: song)
-//        memberDataTable.reloadData()
-//    }
-    
     func showError(with error: Error) {
         let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
@@ -138,8 +123,7 @@ final class DetailViewController: UIViewController { // , DetailViewProtocol
         editButton.setTitle(isEditingEnabled ? "Save" : "Edit", for: .normal)
         editButton.backgroundColor = isEditingEnabled ? .systemBlue : .white
         
-//        if !isEditingEnabled { detailPresenter?.saveContext() }
-        if !isEditingEnabled { coreDataService.saveContext() }
+        if !isEditingEnabled { coreDataManager.saveContext() }
     }
 }
 
@@ -214,7 +198,7 @@ private extension DetailViewController {
         genders.forEach { gender in
             alert.addAction(UIAlertAction(title: gender, style: .default, handler: { [weak self] _ in
                 self?.member.gender = gender
-                self?.coreDataService.saveContext()
+                self?.coreDataManager.saveContext()
                 self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
             }))
         }
@@ -240,7 +224,7 @@ private extension DetailViewController {
         
         let selectAction = UIAlertAction(title: "Select", style: .default) { [weak self] _ in
             self?.member.dateOfBirth = datePicker.date
-            self?.coreDataService.saveContext()
+            self?.coreDataManager.saveContext()
             self?.memberDataTable.reloadRows(at: [indexPath], with: .automatic)
         }
         alert.addAction(selectAction)

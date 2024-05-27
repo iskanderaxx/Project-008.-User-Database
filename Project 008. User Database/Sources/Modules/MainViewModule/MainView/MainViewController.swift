@@ -6,7 +6,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
     
     private var presenter: MainPresenter?
     private var members = [MemberList]()
-    private var coreDataService = CoreDataService.shared
+    private var coreDataManager = CoreDataManager.shared
     
     // MARK: UI Elements & Oulets
     
@@ -84,11 +84,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
     }
     
     private func setupMainPresenter() {
-//        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-//            fatalError()
-//        }
-//        let context = appDelegate.persistentContainer.viewContext
-        presenter = MainPresenter(view: self) // , context: context
+        presenter = MainPresenter(view: self)
         presenter?.getAllMembers()
     }
     
@@ -123,6 +119,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
             make.trailing.equalTo(grayView.snp.trailing).offset(-15)
             make.height.equalTo(0)
         }
+        
         tableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
     }
     
@@ -138,27 +135,6 @@ final class MainViewController: UIViewController, MainViewProtocol {
 }
 
 // MARK: - Extensions
-
-extension MainViewController {
-    func showData(of members: [MemberList]) {
-        self.members = members
-        self.tableView.reloadData()
-    }
-    
-    func showError(with error: Error) {
-        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "contentSize" {
-            tableView.snp.updateConstraints { make in
-                make.height.equalTo(tableView.contentSize.height)
-            }
-        }
-    }
-}
 
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -192,6 +168,27 @@ extension MainViewController: UITableViewDelegate {
             let member = members[indexPath.row]
             presenter?.deleteMember(member)
             tableView.reloadData()
+        }
+    }
+}
+
+extension MainViewController {
+    func showData(of members: [MemberList]) {
+        self.members = members
+        self.tableView.reloadData()
+    }
+    
+    func showError(with error: Error) {
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "contentSize" {
+            tableView.snp.updateConstraints { make in
+                make.height.equalTo(tableView.contentSize.height)
+            }
         }
     }
 }

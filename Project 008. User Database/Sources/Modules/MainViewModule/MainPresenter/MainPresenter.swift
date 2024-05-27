@@ -1,12 +1,17 @@
 
+import Foundation
+
+// MARK: Protocols
+
 protocol MainViewProtocol: AnyObject {
     func showData(of members: [MemberList])
     func showError(with error: Error)
 }
 
 final class MainPresenter {
+    
     private weak var view: MainViewProtocol?
-    private var coreDataService = CoreDataService.shared
+    private var coreDataService = CoreDataManager.shared
     
     init(view: MainViewProtocol) {
         self.view = view

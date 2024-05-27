@@ -1,22 +1,17 @@
 
 import CoreData
 
-//protocol DetailViewProtocol: AnyObject {
-//    func updateMemberData(name: String?, dateOfBirth: Date?, gender: String?, song: String?)
-//    func showError(with error: Error)
-//}
+protocol DetailViewProtocol: AnyObject {
+    func showError(with error: Error)
+}
 
 final class DetailPresenter {
-//   weak var view: DetailViewProtocol?
     private let member: MemberList
-    private let coreDataService: CoreDataService
-//    private var context: NSManagedObjectContext
+    private let coreDataManager: CoreDataManager
     
-    init(member: MemberList, coreDataService: CoreDataService) { // view: DetailViewProtocol, , context: NSManagedObjectContext
-//        self.view = view
+    init(member: MemberList, coreDataManager: CoreDataManager) {
         self.member = member
-        self.coreDataService = coreDataService
-//        self.context = context
+        self.coreDataManager = coreDataManager
     }
     
     func getMemberName() -> String { member.name ?? "" }
@@ -39,17 +34,6 @@ final class DetailPresenter {
         if let gender = gender { setMemberGender(gender) }
         if let song = song { setMemberSong(song) }
         
-        coreDataService.saveContext()
-        
-//        saveContext()
-//        view?.updateMemberData(name: name, dateOfBirth: dateOfBirth, gender: gender, song: song)
+        coreDataManager.saveContext()
     }
-//    
-//    func saveContext() {
-//        do {
-//            try context.save()
-//        } catch {
-//            print("Error saving context: \(error)")
-//        }
-//    }
 }

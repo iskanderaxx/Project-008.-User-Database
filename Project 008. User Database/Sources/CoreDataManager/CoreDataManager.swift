@@ -2,11 +2,12 @@
 import UIKit
 import CoreData
 
-final class CoreDataService {
-    static let shared = CoreDataService()
-    private init() {}
+final class CoreDataManager {
     
+    static let shared = CoreDataManager()
     private weak var view: MainViewProtocol?
+    
+    private init() {}
     
     // MARK: Core Data stack
     

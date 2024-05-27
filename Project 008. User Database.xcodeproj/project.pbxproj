@@ -16,7 +16,7 @@
 		8C11F1302BE835480048DFD0 /* DetailViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F12F2BE835480048DFD0 /* DetailViewCell.swift */; };
 		8C11F1332BE95BA50048DFD0 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F1312BE95BA40048DFD0 /* Model.xcdatamodeld */; };
 		8C11F13A2BE97E650048DFD0 /* MemberList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C11F1382BE97E650048DFD0 /* MemberList+CoreDataProperties.swift */; };
-		8CC1A7D42C04EC8500AD8C92 /* CoreDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC1A7D32C04EC8500AD8C92 /* CoreDataService.swift */; };
+		8CC1A7D42C04EC8500AD8C92 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC1A7D32C04EC8500AD8C92 /* CoreDataManager.swift */; };
 		8CD125022BFA75EF00609DA2 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD125012BFA75EF00609DA2 /* DetailViewController.swift */; };
 		8CD125062BFBC77600609DA2 /* DetailPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD125052BFBC77600609DA2 /* DetailPresenter.swift */; };
 		8CD1250C2BFD42EE00609DA2 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8CD1250B2BFD42EE00609DA2 /* SnapKit */; };
@@ -47,7 +47,7 @@
 		8C11F12F2BE835480048DFD0 /* DetailViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewCell.swift; sourceTree = "<group>"; };
 		8C11F1322BE95BA50048DFD0 /* Model001.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model001.xcdatamodel; sourceTree = "<group>"; };
 		8C11F1382BE97E650048DFD0 /* MemberList+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberList+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		8CC1A7D32C04EC8500AD8C92 /* CoreDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataService.swift; sourceTree = "<group>"; };
+		8CC1A7D32C04EC8500AD8C92 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		8CD125012BFA75EF00609DA2 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		8CD125052BFBC77600609DA2 /* DetailPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -104,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				8CFE096D2BF6537300494D34 /* Application */,
+				8CC1A7D52C05000500AD8C92 /* CoreDataManager */,
 				8C11F1202BE7C0A70048DFD0 /* Modules */,
 			);
 			path = Sources;
@@ -121,7 +122,8 @@
 		8C11F1212BE7C0B50048DFD0 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				8C11F1342BE95FA00048DFD0 /* CoreData */,
+				8C11F1382BE97E650048DFD0 /* MemberList+CoreDataProperties.swift */,
+				8C11F1312BE95BA40048DFD0 /* Model.xcdatamodeld */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -142,14 +144,12 @@
 			path = MainPresenter;
 			sourceTree = "<group>";
 		};
-		8C11F1342BE95FA00048DFD0 /* CoreData */ = {
+		8CC1A7D52C05000500AD8C92 /* CoreDataManager */ = {
 			isa = PBXGroup;
 			children = (
-				8C11F1382BE97E650048DFD0 /* MemberList+CoreDataProperties.swift */,
-				8CC1A7D32C04EC8500AD8C92 /* CoreDataService.swift */,
-				8C11F1312BE95BA40048DFD0 /* Model.xcdatamodeld */,
+				8CC1A7D32C04EC8500AD8C92 /* CoreDataManager.swift */,
 			);
-			path = CoreData;
+			path = CoreDataManager;
 			sourceTree = "<group>";
 		};
 		8CD125032BFA863D00609DA2 /* MainViewModule */ = {
@@ -283,7 +283,7 @@
 			files = (
 				8C11F1332BE95BA50048DFD0 /* Model.xcdatamodeld in Sources */,
 				8CD125022BFA75EF00609DA2 /* DetailViewController.swift in Sources */,
-				8CC1A7D42C04EC8500AD8C92 /* CoreDataService.swift in Sources */,
+				8CC1A7D42C04EC8500AD8C92 /* CoreDataManager.swift in Sources */,
 				8C11F10F2BE7BA870048DFD0 /* MainViewController.swift in Sources */,
 				8C11F10B2BE7BA870048DFD0 /* AppDelegate.swift in Sources */,
 				8CD125062BFBC77600609DA2 /* DetailPresenter.swift in Sources */,
